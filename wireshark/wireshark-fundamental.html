@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireshark – مرجع المذاكرة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0f1a;
+  --bg2:#111827;
+  --bg3:#1a2235;
+  --card:#141e2e;
+  --border:#1e2d42;
+  --border2:#243450;
+  --blue:#4d9fff;
+  --cyan:#22d3ee;
+  --green:#34d399;
+  --orange:#fb923c;
+  --red:#f87171;
+  --yellow:#fbbf24;
+  --purple:#a78bfa;
+  --text:#dde6f0;
+  --text2:#8ba0bc;
+  --text3:#506070;
+  --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;font-size:15px;line-height:1.75;}
+
+/* ===== TOP NAV ===== */
+#topnav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(11,15,26,0.97);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(10px);
+  padding:0 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:56px;
+}
+.topnav-logo{
+  font-size:16px;font-weight:800;color:var(--blue);
+  display:flex;align-items:center;gap:10px;letter-spacing:0.5px;
+}
+.topnav-logo span{color:var(--text2);font-weight:400;font-size:13px;}
+.topnav-pages{display:flex;gap:6px;}
+.page-btn{
+  padding:7px 18px;border-radius:8px;
+  background:var(--bg3);border:1px solid var(--border2);
+  color:var(--text2);font-family:'Tajawal',sans-serif;
+  font-size:13px;font-weight:500;cursor:pointer;
+  text-decoration:none;display:flex;align-items:center;gap:7px;
+  transition:all 0.2s;white-space:nowrap;
+}
+.page-btn:hover{background:rgba(77,159,255,0.1);border-color:rgba(77,159,255,0.4);color:var(--blue);}
+.page-btn.active{background:rgba(77,159,255,0.12);border-color:var(--blue);color:var(--blue);}
+.page-btn .dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:0.6;}
+
+/* ===== LAYOUT ===== */
+#sidebar{
+  position:fixed;top:56px;right:0;
+  width:260px;height:calc(100vh - 56px);
+  background:var(--bg2);border-left:1px solid var(--border);
+  overflow-y:auto;padding:16px 0;
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+  z-index:100;
+}
+#sidebar::-webkit-scrollbar{width:3px;}
+#sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+.nav-section{
+  padding:12px 18px 4px;
+  font-size:10px;text-transform:uppercase;
+  letter-spacing:2px;color:var(--text3);font-weight:700;
+}
+.nav-link{
+  display:block;padding:7px 18px;
+  color:var(--text2);font-size:13px;
+  text-decoration:none;border-right:2px solid transparent;
+  transition:all 0.18s;cursor:pointer;
+}
+.nav-link:hover,.nav-link.active{
+  color:var(--blue);background:rgba(77,159,255,0.06);
+  border-right-color:var(--blue);
+}
+
+#main{margin-right:260px;padding:36px 48px;max-width:980px;}
+
+/* ===== PROGRESS ===== */
+#prog{
+  position:fixed;top:56px;left:0;right:260px;height:2px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan));
+  transform-origin:left;transform:scaleX(0);z-index:99;
+}
+
+/* ===== HERO ===== */
+.hero{
+  background:linear-gradient(135deg,var(--bg2) 0%,rgba(26,34,53,0.8) 100%);
+  border:1px solid var(--border2);border-radius:14px;
+  padding:40px;margin-bottom:36px;position:relative;overflow:hidden;
+}
+.hero::after{
+  content:'';position:absolute;bottom:-80px;left:-80px;
+  width:320px;height:320px;border-radius:50%;
+  background:radial-gradient(circle,rgba(77,159,255,0.05) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(77,159,255,0.08);border:1px solid rgba(77,159,255,0.25);
+  border-radius:20px;padding:4px 14px;font-size:11px;
+  color:var(--blue);font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;margin-bottom:16px;
+}
+.hero h1{font-size:32px;font-weight:800;margin-bottom:8px;line-height:1.2;}
+.hero h1 em{color:var(--blue);font-style:normal;}
+.hero p{color:var(--text2);font-size:15px;max-width:540px;line-height:1.7;}
+.hero-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:28px;}
+.hero-stat{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.hero-stat .n{font-size:22px;font-weight:800;color:var(--cyan);font-family:var(--mono);}
+.hero-stat .l{font-size:11px;color:var(--text3);margin-top:2px;}
+
+/* ===== SECTION ===== */
+.section{margin-bottom:44px;scroll-margin-top:70px;}
+.section-head{
+  display:flex;align-items:flex-start;gap:12px;
+  padding-bottom:14px;border-bottom:1px solid var(--border);
+  margin-bottom:22px;
+}
+.sec-num{
+  width:30px;height:30px;border-radius:7px;
+  background:var(--blue);color:#000;
+  font-size:13px;font-weight:800;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.sec-title{font-size:20px;font-weight:700;color:var(--text);}
+.sec-sub{font-size:12px;color:var(--text3);margin-top:2px;font-family:var(--mono);}
+
+/* ===== CARDS ===== */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:11px;padding:20px;margin-bottom:14px;
+  transition:border-color 0.2s;
+}
+.card:hover{border-color:var(--border2);}
+.card-title{
+  font-size:15px;font-weight:700;color:var(--blue);
+  margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.card p{color:var(--text2);font-size:14px;line-height:1.75;margin-bottom:6px;}
+
+/* GRID LAYOUTS */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+
+/* ===== CODE ===== */
+.code{
+  background:#060d1a;border:1px solid var(--border);border-radius:8px;
+  padding:13px 16px;font-family:var(--mono);font-size:12.5px;
+  color:var(--cyan);overflow-x:auto;direction:ltr;text-align:left;
+  margin:10px 0;line-height:1.6;
+}
+code{
+  background:rgba(77,159,255,0.1);color:var(--cyan);
+  padding:1px 6px;border-radius:4px;font-family:var(--mono);
+  font-size:12px;
+}
+
+/* ===== ALERT BOXES ===== */
+.alert{
+  border-radius:9px;padding:14px 18px;margin:12px 0;
+  display:flex;gap:12px;align-items:flex-start;
+  font-size:14px;
+}
+.alert.tip{background:rgba(52,211,153,0.07);border:1px solid rgba(52,211,153,0.2);}
+.alert.warn{background:rgba(251,191,36,0.07);border:1px solid rgba(251,191,36,0.2);}
+.alert.danger{background:rgba(248,113,113,0.07);border:1px solid rgba(248,113,113,0.2);}
+.alert.info{background:rgba(77,159,255,0.07);border:1px solid rgba(77,159,255,0.2);}
+.alert.note{background:rgba(167,139,250,0.07);border:1px solid rgba(167,139,250,0.2);}
+.alert-icon{flex-shrink:0;font-size:16px;margin-top:1px;}
+.alert.tip .alert-icon,.alert.tip .al-title{color:var(--green);}
+.alert.warn .alert-icon,.alert.warn .al-title{color:var(--yellow);}
+.alert.danger .alert-icon,.alert.danger .al-title{color:var(--red);}
+.alert.info .alert-icon,.alert.info .al-title{color:var(--blue);}
+.alert.note .alert-icon,.alert.note .al-title{color:var(--purple);}
+.al-title{font-weight:700;margin-bottom:3px;font-size:13px;}
+.alert-body{color:var(--text2);line-height:1.7;}
+
+/* ===== TABLE ===== */
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0;}
+.tbl thead tr{background:rgba(77,159,255,0.08);border-bottom:2px solid rgba(77,159,255,0.2);}
+.tbl th{padding:10px 14px;text-align:right;color:var(--blue);font-size:12px;text-transform:uppercase;letter-spacing:0.5px;}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;}
+.tbl tbody tr:hover{background:rgba(255,255,255,0.015);}
+.tbl tbody tr:last-child td{border-bottom:none;}
+
+/* ===== STEPS ===== */
+.steps{display:flex;flex-direction:column;gap:10px;margin:12px 0;}
+.step{display:flex;gap:12px;align-items:flex-start;}
+.step-n{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  background:rgba(77,159,255,0.12);border:1px solid rgba(77,159,255,0.3);
+  color:var(--blue);font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;margin-top:2px;
+}
+.step-c{font-size:14px;color:var(--text2);line-height:1.7;}
+.step-c strong{color:var(--text);}
+
+/* ===== TAGS ===== */
+.tag{display:inline-block;padding:2px 9px;border-radius:5px;font-size:12px;font-weight:600;margin:2px;}
+.tag-b{background:rgba(77,159,255,0.1);color:var(--blue);}
+.tag-g{background:rgba(52,211,153,0.1);color:var(--green);}
+.tag-r{background:rgba(248,113,113,0.1);color:var(--red);}
+.tag-y{background:rgba(251,191,36,0.1);color:var(--yellow);}
+.tag-p{background:rgba(167,139,250,0.1);color:var(--purple);}
+.tag-c{background:rgba(34,211,238,0.1);color:var(--cyan);}
+
+/* ===== IMAGES ===== */
+.img-wrapper{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:11px;overflow:hidden;margin:14px 0;
+}
+.img-wrapper img{width:100%;display:block;}
+.img-caption{
+  padding:9px 14px;font-size:12px;color:var(--text3);
+  border-top:1px solid var(--border);font-family:var(--mono);
+}
+
+/* ===== GUI LAYERS ===== */
+.layer-card{
+  border-radius:10px;padding:16px;margin-bottom:10px;
+  border-right:3px solid;
+}
+.layer-frame{background:rgba(77,159,255,0.05);border-color:var(--blue);}
+.layer-eth{background:rgba(167,139,250,0.05);border-color:var(--purple);}
+.layer-ip{background:rgba(34,211,238,0.05);border-color:var(--cyan);}
+.layer-tcp{background:rgba(251,191,36,0.05);border-color:var(--yellow);}
+.layer-http{background:rgba(52,211,153,0.05);border-color:var(--green);}
+.layer-title{font-size:14px;font-weight:700;margin-bottom:6px;}
+.layer-frame .layer-title{color:var(--blue);}
+.layer-eth .layer-title{color:var(--purple);}
+.layer-ip .layer-title{color:var(--cyan);}
+.layer-tcp .layer-title{color:var(--yellow);}
+.layer-http .layer-title{color:var(--green);}
+
+/* ===== SEVERITY LEVELS ===== */
+.sev-row{
+  display:flex;align-items:center;gap:14px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:9px;padding:12px 18px;margin-bottom:8px;
+}
+.sev-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.sev-label{font-weight:700;font-size:14px;min-width:60px;}
+.sev-desc{font-size:13.5px;color:var(--text2);}
+.sev-blue .sev-dot{background:var(--blue);}
+.sev-blue .sev-label{color:var(--blue);}
+.sev-cyan .sev-dot{background:var(--cyan);}
+.sev-cyan .sev-label{color:var(--cyan);}
+.sev-yellow .sev-dot{background:var(--yellow);box-shadow:0 0 6px var(--yellow);}
+.sev-yellow .sev-label{color:var(--yellow);}
+.sev-red .sev-dot{background:var(--red);box-shadow:0 0 6px var(--red);}
+.sev-red .sev-label{color:var(--red);}
+
+/* ===== CHAIN ===== */
+.chain{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  font-family:var(--mono);direction:ltr;margin:12px 0;
+}
+.chain-step{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:7px;padding:7px 14px;font-size:12.5px;color:var(--cyan);font-weight:600;
+}
+.chain-arr{color:var(--text3);}
+
+/* ===== DIVIDER ===== */
+.div{height:1px;background:var(--border);margin:22px 0;}
+
+/* ===== COMPARE BOXES ===== */
+.vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+.vs-card{background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:16px;}
+.vs-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+
+/* ===== FILTER EXAMPLES ===== */
+.filter-grid{display:flex;flex-direction:column;gap:8px;margin:12px 0;}
+.filter-row{
+  display:flex;align-items:flex-start;gap:12px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:8px;padding:10px 14px;
+}
+.filter-code{
+  font-family:var(--mono);font-size:12.5px;color:var(--cyan);
+  background:rgba(77,159,255,0.07);padding:3px 8px;border-radius:5px;
+  white-space:nowrap;flex-shrink:0;direction:ltr;
+}
+.filter-desc{font-size:13.5px;color:var(--text2);}
+
+/* ===== BACK TO TOP ===== */
+#btt{
+  position:fixed;bottom:28px;left:28px;
+  width:42px;height:42px;background:var(--card);
+  border:1px solid var(--border2);border-radius:9px;
+  color:var(--blue);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:16px;opacity:0;transform:translateY(8px);
+  transition:all 0.3s;z-index:50;
+}
+#btt.show{opacity:1;transform:translateY(0);}
+#btt:hover{background:rgba(77,159,255,0.1);}
+
+/* ===== MOBILE ===== */
+.mob-btn{
+  display:none;position:fixed;top:65px;right:14px;
+  z-index:150;background:var(--blue);color:#000;
+  border:none;border-radius:8px;width:36px;height:36px;
+  font-size:16px;cursor:pointer;
+  align-items:center;justify-content:center;
+}
+@media(max-width:900px){
+  #sidebar{transform:translateX(260px);transition:transform 0.28s;}
+  #sidebar.open{transform:translateX(0);}
+  #main{margin-right:0;padding:24px 18px;}
+  .mob-btn{display:flex;}
+  .grid2,.grid3,.grid4{grid-template-columns:1fr;}
+  .hero-grid{grid-template-columns:1fr 1fr;}
+  .topnav-pages{display:none;}
+  #prog{right:0;}
+}
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+
+<!-- TOP NAVIGATION -->
+<nav id="topnav">
+  <div class="topnav-logo">
+    Wireshark <span>— مرجع المذاكرة</span>
+  </div>
+  <div class="topnav-pages">
+    <a class="page-btn active" href="#">
+      <span class="dot"></span>
+      Wireshark: Fundamentals
+    </a>
+    <a class="page-btn" href="https://4bo4yman.github.io/SOC-Analyst/wireshark/packet_ops.html">
+      <span class="dot"></span>
+      Wireshark: Packet Operations
+    </a>
+    <a class="page-btn" href="https://4bo4yman.github.io/SOC-Analyst/wireshark/traffic-analysis.html">
+      <span class="dot"></span>
+      Wireshark: Traffic Analysis
+    </a>
+    <a class="page-btn" href="https://4bo4yman.github.io/SOC-Analyst/wireshark/networkminer.html">
+      <span class="dot"></span>
+      NetworkMiner
+    </a>
+  </div>
+</nav>
+
+<button class="mob-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="nav-section">المقدمة</div>
+  <a class="nav-link" onclick="go('intro')">ما هو Wireshark؟</a>
+  <a class="nav-link" onclick="go('usecases')">حالات الاستخدام</a>
+
+  <div class="nav-section">الواجهة</div>
+  <a class="nav-link" onclick="go('gui')">واجهة البرنامج – GUI</a>
+  <a class="nav-link" onclick="go('panels')">الأقسام الثلاثة</a>
+  <a class="nav-link" onclick="go('colors')">Coloring Rules</a>
+  <a class="nav-link" onclick="go('sniffing')">Traffic Sniffing</a>
+
+  <div class="nav-section">الملفات والبيانات</div>
+  <a class="nav-link" onclick="go('merge')">Merge PCAP</a>
+  <a class="nav-link" onclick="go('filedetails')">File Details</a>
+  <a class="nav-link" onclick="go('dissection')">Packet Dissection</a>
+
+  <div class="nav-section">التنقل والبحث</div>
+  <a class="nav-link" onclick="go('navigation')">Packet Navigation</a>
+  <a class="nav-link" onclick="go('find')">Find Packet</a>
+  <a class="nav-link" onclick="go('mark')">Mark Packet</a>
+  <a class="nav-link" onclick="go('comments')">Packet Comments</a>
+
+  <div class="nav-section">التصدير والتحليل</div>
+  <a class="nav-link" onclick="go('export')">Export Packets</a>
+  <a class="nav-link" onclick="go('exportobj')">Export Objects</a>
+  <a class="nav-link" onclick="go('timedisplay')">Time Display Format</a>
+  <a class="nav-link" onclick="go('expertinfo')">Expert Info</a>
+
+  <div class="nav-section">الفلترة المتقدمة</div>
+  <a class="nav-link" onclick="go('filters')">Display Filters</a>
+  <a class="nav-link" onclick="go('conversation')">Conversation Filter</a>
+  <a class="nav-link" onclick="go('prepare')">Prepare as Filter</a>
+  <a class="nav-link" onclick="go('applycolumn')">Apply as Column</a>
+  <a class="nav-link" onclick="go('followstream')">Follow Stream</a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main id="main">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Network Analysis Tool</div>
+  <h1>Wireshark<br><em>مرجع المذاكرة الشامل</em></h1>
+  <p>دليل مرجعي منظم لتحليل حركة الشبكة باستخدام Wireshark — من الأساسيات إلى التقنيات المتقدمة في التحليل الأمني.</p>
+  <div class="hero-grid">
+    <div class="hero-stat"><div class="n">Passive</div><div class="l">أداة تحليل لا تمنع ولا تنبّه</div></div>
+    <div class="hero-stat"><div class="n">PCAP</div><div class="l">صيغة ملف التقاط الشبكة</div></div>
+    <div class="hero-stat"><div class="n">Layers</div><div class="l">تحليل طبقي كامل للبروتوكولات</div></div>
+    <div class="hero-stat"><div class="n">SOC</div><div class="l">أداة أساسية في تحليل الحوادث</div></div>
+  </div>
+</div>
+
+<!-- 1. INTRO -->
+<section class="section" id="intro">
+  <div class="section-head">
+    <div class="sec-num">1</div>
+    <div>
+      <div class="sec-title">ما هو Wireshark؟</div>
+      <div class="sec-sub">Introduction & Core Concept</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">التعريف الأساسي</div>
+      <p>Wireshark هو أداة تحليل شبكات تتيح التقاط وفحص حركة البيانات (Packets) التي تمر عبر الشبكة. كل نشاط شبكي — تصفح، تسجيل دخول، نقل بيانات — يتحول إلى Packets يمكن فتحها وقراءتها.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">نموذج الطبقات</div>
+      <p>الشبكة تعمل بنظام Layers، وكل Packet تظهر في Wireshark مقسمة على هذه الطبقات:</p>
+      <div style="margin-top:10px;">
+        <span class="tag tag-g">Application (HTTP, DNS)</span>
+        <span class="tag tag-y">Transport (TCP/UDP)</span>
+        <span class="tag tag-c">Network (IP)</span>
+        <span class="tag tag-p">Data Link (Ethernet)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert warn">
+    <span class="alert-icon">⚠</span>
+    <div>
+      <div class="al-title">Wireshark ليس IDS</div>
+      <div class="alert-body">Wireshark هو <strong>Passive Analyzer</strong> فقط — لا يكتشف هجمات تلقائياً ولا يمنع أي نشاط. دوره هو العرض والتحليل. المحلل هو من يلاحظ ويستنتج. للكشف التلقائي استخدم IDS مثل Snort.</div>
+    </div>
+  </div>
+
+  <div class="grid3" style="margin-top:14px;">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:6px;">Wireshark</div>
+      <div style="font-size:12px;color:var(--text2);">رؤية + تحليل</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:6px;">IDS (Snort)</div>
+      <div style="font-size:12px;color:var(--text2);">Detection + Alerts</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:6px;">المحلل</div>
+      <div style="font-size:12px;color:var(--text2);">يلاحظ ويستنتج</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. USE CASES -->
+<section class="section" id="usecases">
+  <div class="section-head">
+    <div class="sec-num">2</div>
+    <div>
+      <div class="sec-title">حالات الاستخدام الرئيسية</div>
+      <div class="sec-sub">Use Cases</div>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title" style="color:var(--orange);">Network Troubleshooting</div>
+      <p>تشخيص مشكلات الشبكة على مستوى الـ Packet:</p>
+      <div class="code">tcp.analysis.retransmission</div>
+      <p style="margin-top:8px;">كثرة الـ Retransmissions = Packet Loss أو Congestion = بطء الشبكة.</p>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--red);">Security Analysis</div>
+      <p>كشف التهديدات الأمنية:</p>
+      <div class="filter-grid" style="margin-top:8px;">
+        <div class="filter-row" style="padding:7px 10px;">
+          <span class="filter-code">arp</span>
+          <span class="filter-desc" style="font-size:12px;">كشف Rogue Host عبر MAC غير معروف</span>
+        </div>
+        <div class="filter-row" style="padding:7px 10px;">
+          <span class="filter-code">tcp.flags.syn==1 and tcp.flags.ack==0</span>
+          <span class="filter-desc" style="font-size:12px;">كشف Port Scanning</span>
+        </div>
+        <div class="filter-row" style="padding:7px 10px;">
+          <span class="filter-code">dns</span>
+          <span class="filter-desc" style="font-size:12px;">كشف DNS Tunneling</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--green);">Protocol Analysis</div>
+      <p>فهم البروتوكولات وسلوكها. مثال HTTP:</p>
+      <ul style="list-style:none;margin-top:10px;">
+        <li style="color:var(--text2);font-size:13.5px;padding:4px 0;">Request: Method + URI</li>
+        <li style="color:var(--text2);font-size:13.5px;padding:4px 0;">Response: Status Code + Data</li>
+        <li style="color:var(--text2);font-size:13.5px;padding:4px 0;">استخراج ملفات وCredentials (HTTP)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="alert tip" style="margin-top:6px;">
+    <span class="alert-icon">→</span>
+    <div>
+      <div class="al-title">Workflow تحليل المحلل</div>
+      <div class="alert-body">1. حدد الهدف (بطء / هجوم / تحليل بروتوكول) &nbsp;→&nbsp; 2. استخدم Filters &nbsp;→&nbsp; 3. اربط بين Packets &nbsp;→&nbsp; 4. استنتج السلوك</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. GUI -->
+<section class="section" id="gui">
+  <div class="section-head">
+    <div class="sec-num">3</div>
+    <div>
+      <div class="sec-title">واجهة البرنامج – GUI</div>
+      <div class="sec-sub">Wireshark Interface Overview</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_01.png" alt="image.png"><div class="img-caption">الواجهة الرئيسية لـ Wireshark</div></div>
+  <div class="grid2" style="margin-top:14px;">
+    <div class="card">
+      <div class="card-title" style="color:var(--red);">Toolbar</div>
+      <p>شريط الأدوات العلوي يحتوي على:</p>
+      <div class="steps" style="margin-top:8px;">
+        <div class="step"><div class="step-n">▸</div><div class="step-c"><strong>Start / Stop / Restart Capture</strong></div></div>
+        <div class="step"><div class="step-n">▸</div><div class="step-c"><strong>Open / Save PCAP</strong></div></div>
+        <div class="step"><div class="step-n">▸</div><div class="step-c"><strong>Export Objects</strong> — استخراج ملفات من الترافيك (صور، exe، html)</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--blue);">Display Filter Bar</div>
+      <p>سلاحك الأساسي في التحليل — ليس مجرد فلتر بل لغة تحليل كاملة:</p>
+      <div class="code">http.request.method=="POST"
+tcp.port==443 and ip.dst==10.10.10.10
+dns.qry.name contains "login"</div>
+      <div class="alert info" style="padding:8px 12px;margin-top:8px;">
+        <span class="alert-icon" style="font-size:13px;">→</span>
+        <div class="alert-body" style="font-size:13px;">استخدم Autocomplete بضغط <code>Ctrl + Space</code></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--yellow);">Capture Interfaces</div>
+      <p>اختيار الـ Interface الصحيح ضروري قبل بدء الالتقاط:</p>
+      <div class="tbl" style="margin-top:8px;">
+        <tr><td><code>eth0</code></td><td>Network card الرئيسي</td></tr>
+        <tr><td><code>lo</code></td><td>Localhost traffic فقط</td></tr>
+      </div>
+      <div class="alert warn" style="padding:8px 12px;margin-top:8px;">
+        <span class="alert-icon" style="font-size:13px;">⚠</span>
+        <div class="alert-body" style="font-size:13px;">اختيار Interface غلط = لن ترى الترافيك المطلوب</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--green);">Status Bar</div>
+      <p>يعرض في أسفل الشاشة معلومات مهمة:</p>
+      <div class="steps" style="margin-top:8px;">
+        <div class="step"><div class="step-n">▸</div><div class="step-c">عدد الباكيتات الكلي والمفلتر</div></div>
+        <div class="step"><div class="step-n">▸</div><div class="step-c">هل الفلتر نشط أم لا</div></div>
+        <div class="step"><div class="step-n">▸</div><div class="step-c"><strong>Dropped Packets</strong> — إذا ظهرت: الجهاز لا يستطيع مواكبة الترافيك</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:4px;">
+    <div class="card-title">Capture Filter vs Display Filter</div>
+    <table class="tbl">
+      <thead><tr><th>النوع</th><th>وقت التطبيق</th><th>الهدف</th><th>الاستخدام</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Capture Filter</strong></td><td>قبل التسجيل</td><td>تقليل حجم البيانات الملتقطة</td><td>لتحسين الأداء</td></tr>
+        <tr><td><strong>Display Filter</strong></td><td>بعد التسجيل</td><td>تحليل الـ PCAP المحفوظ</td><td>الأكثر استخداماً</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 4. PANELS -->
+<section class="section" id="panels">
+  <div class="section-head">
+    <div class="sec-num">4</div>
+    <div>
+      <div class="sec-title">الأقسام الثلاثة للتحليل</div>
+      <div class="sec-sub">Packet List / Details / Bytes</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_02.png" alt="image_1.png"><div class="img-caption">تقسيم شاشة Wireshark الثلاثي</div></div>
+  <div class="layer-card layer-frame" style="border-right-color:var(--yellow);">
+    <div class="layer-title" style="color:var(--yellow);">Packet List — المستوى الأول (High-level Overview)</div>
+    <p style="color:var(--text2);font-size:14px;">يعرض جميع الباكيتات في جدول. الأعمدة المهمة: <code>Time</code> <code>Source/Destination</code> <code>Protocol</code> <code>Length</code> <code>Info</code></p>
+    <div class="alert info" style="margin-top:10px;padding:8px 12px;">
+      <span class="alert-icon" style="font-size:13px;">→</span>
+      <div class="alert-body" style="font-size:13px;">HTTP = نشاط ويب &nbsp;|&nbsp; DNS = Domain Resolution &nbsp;|&nbsp; TCP = طبقة النقل — يساعدك على Profiling سريع للترافيك</div>
+    </div>
+  </div>
+
+  <div class="layer-card layer-http">
+    <div class="layer-title">Packet Details — المستوى الثاني (التحليل الحقيقي)</div>
+    <p style="color:var(--text2);font-size:14px;">يعرض تفاصيل الـ Packet مقسمة Layer by Layer. اضغط على أي Layer لتوسيعها:</p>
+    <div class="chain" style="margin-top:10px;">
+      <div class="chain-step" style="color:var(--blue);">Frame</div>
+      <div class="chain-arr">→</div>
+      <div class="chain-step" style="color:var(--purple);">Ethernet II</div>
+      <div class="chain-arr">→</div>
+      <div class="chain-step" style="color:var(--cyan);">IPv4</div>
+      <div class="chain-arr">→</div>
+      <div class="chain-step" style="color:var(--yellow);">TCP</div>
+      <div class="chain-arr">→</div>
+      <div class="chain-step" style="color:var(--green);">HTTP</div>
+    </div>
+    <p style="color:var(--text2);font-size:13.5px;margin-top:10px;">Sequence & Acknowledgment Numbers مفيدة في تتبع الجلسة واكتشاف Packet Loss وإعادة بناء الترافيك.</p>
+  </div>
+
+  <div class="layer-card layer-eth" style="border-right-color:var(--text3);">
+    <div class="layer-title" style="color:var(--text2);">Packet Bytes — المستوى الثالث (Low-level)</div>
+    <p style="color:var(--text2);font-size:14px;">يعرض البيانات الخام بصيغة Hex وASCII. مفيد في: Malware Analysis، استخراج Data، Reverse Engineering.</p>
+    <div class="code">GET /login HTTP/1.1   ← يظهر واضحاً في ASCII</div>
+    <p style="color:var(--text2);font-size:13.5px;margin-top:6px;">عند الضغط على أي Layer في Packet Details، يقوم Wireshark بتمييز البايتات المقابلة لها تلقائياً.</p>
+  </div>
+
+  <div class="alert danger" style="margin-top:8px;">
+    <span class="alert-icon">✖</span>
+    <div>
+      <div class="al-title">أخطاء شائعة يجب تجنبها</div>
+      <div class="alert-body">
+        لا تعتمد على Packet واحدة — يجب رؤية الـ Sequence الكاملة &nbsp;|&nbsp;
+        لا تعتمد على عمود Info فقط — يجب الدخول داخل الطبقات &nbsp;|&nbsp;
+        لا تتجاهل عمود Time — فهو أساسي في التحليل الزمني
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. COLORS -->
+<section class="section" id="colors">
+  <div class="section-head">
+    <div class="sec-num">5</div>
+    <div>
+      <div class="sec-title">Coloring Rules</div>
+      <div class="sec-sub">اكتشاف بصري سريع للأنماط والمشكلات</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_03.png" alt="image_2.png"><div class="img-caption">Coloring Rules في Wireshark</div></div>
+  <p style="color:var(--text2);font-size:14px;margin-bottom:16px;">Wireshark يستخدم ألواناً افتراضية للتمييز بين البروتوكولات وإبراز المشكلات. مع وجود 100,000+ Packet، الألوان توجهك فوراً نحو موطن الإشكالية.</p>
+
+  <div class="grid2">
+    <div>
+      <div class="sev-row sev-red"><div class="sev-dot"></div><div class="sev-label">أحمر</div><div class="sev-desc">TCP RST — اتصال انتهى فجأة. يدل على: Firewall Block، Service Down، Port Closed</div></div>
+      <div class="sev-row sev-yellow"><div class="sev-dot"></div><div class="sev-label">برتقالي</div><div class="sev-desc">Checksum Errors — Packet تالفة. أحياناً False Positive بسبب NIC Offloading</div></div>
+      <div class="sev-row sev-blue"><div class="sev-dot" style="background:var(--green)"></div><div class="sev-label" style="color:var(--green);">أخضر</div><div class="sev-desc">HTTP / TCP Port 80 — تصفح ويب طبيعي</div></div>
+      <div class="sev-row sev-blue"><div class="sev-dot" style="background:var(--yellow)"></div><div class="sev-label" style="color:var(--yellow);">أصفر</div><div class="sev-desc">ARP — مهم في اكتشاف ARP Spoofing</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">طريقة تفكير المحلل مع الألوان</div>
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-c">افحص توزيع الألوان أولاً</div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-c">حدد الشذوذ (Anomaly)</div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-c">طبّق فلتراً للتعمق</div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-c">حلل التفاصيل في Packet Details</div></div>
+      </div>
+      <div class="alert warn" style="margin-top:12px;padding:10px 12px;">
+        <span class="alert-icon" style="font-size:13px;">⚠</span>
+        <div class="alert-body" style="font-size:13px;">اللون الأحمر لا يعني هجوماً دائماً، والأخضر لا يعني طبيعياً دائماً. ربط اللون بالسياق هو الأساس.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px;">
+    <div class="card-title">Temporary vs Permanent Coloring</div>
+    <div class="vs-grid">
+      <div class="vs-card">
+        <div class="vs-label" style="color:var(--yellow);">Temporary</div>
+        <p style="font-size:13.5px;color:var(--text2);">للجلسة الحالية فقط — يُستخدم في التحليل السريع.</p>
+      </div>
+      <div class="vs-card">
+        <div class="vs-label" style="color:var(--green);">Permanent</div>
+        <p style="font-size:13.5px;color:var(--text2);">محفوظ في Profile — يُستخدم في العمل اليومي.</p>
+      </div>
+    </div>
+    <div class="card-title" style="margin-top:12px;font-size:14px;">Custom Rule مفيدة</div>
+    <div class="code">tcp.flags.syn==1 and tcp.flags.ack==0   ← يُبرز أي Port Scan فوراً</div>
+  </div>
+</section>
+
+<!-- 6. SNIFFING -->
+<section class="section" id="sniffing">
+  <div class="section-head">
+    <div class="sec-num">6</div>
+    <div>
+      <div class="sec-title">Traffic Sniffing – الالتقاط المباشر</div>
+      <div class="sec-sub">Live Capture</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_04.png" alt="image_3.png"><div class="img-caption">واجهة Live Capture</div></div>
+  <div class="grid2" style="margin-top:14px;">
+    <div class="card">
+      <div class="card-title">أزرار الالتقاط</div>
+      <div class="steps">
+        <div class="step"><div class="step-n">▸</div><div class="step-c"><strong>Start Capture</strong> — يبدأ الالتقاط على الـ Interface المختار</div></div>
+        <div class="step"><div class="step-n">▸</div><div class="step-c"><strong>Stop</strong> — يوقف الالتقاط ويحفظ البيانات</div></div>
+        <div class="step"><div class="step-n">▸</div><div class="step-c"><strong>Restart</strong> — يمسح الالتقاط الحالي ويبدأ من جديد</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Status Bar أثناء الالتقاط</div>
+      <div class="code">eth0: &lt;live capture in progress&gt;
+Packets: 122</div>
+      <p style="margin-top:8px;">يعرض اسم الـ Interface والعدد المتراكم من الباكيتات في الوقت الحقيقي.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7. MERGE PCAP -->
+<section class="section" id="merge">
+  <div class="section-head">
+    <div class="sec-num">7</div>
+    <div>
+      <div class="sec-title">Merge PCAP</div>
+      <div class="sec-sub">دمج ملفات الالتقاط المتعددة</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_05.gif" alt="66c44fd9733427ea1181ad58-1760973498209.gif"><div class="img-caption">عملية دمج ملفات PCAP</div></div>
+  <div class="grid2" style="margin-top:14px;">
+    <div class="card">
+      <div class="card-title">متى نستخدم Merge؟</div>
+      <p>في التحليل الحقيقي قد يكون الترافيك موزعاً على ملفات متعددة: التقاط من أجهزة مختلفة، فترات زمنية متعددة، أو logs متفرقة. الدمج يتيح تحليلاً شاملاً بدلاً من التحليل المنفصل.</p>
+      <div class="code" style="margin-top:10px;">File → Merge</div>
+    </div>
+    <div class="card">
+      <div class="card-title">ما يفعله Wireshark عند الدمج</div>
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-c">دمج جميع الباكيتات من الملفات</div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-c">ترتيبها حسب الـ Timestamp</div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-c">الحفاظ على كل التفاصيل</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:4px;">
+    <div class="card-title">التسلسل الطبيعي للأحداث (Normal Session Flow)</div>
+    <div class="chain">
+      <div class="chain-step">DNS Query</div>
+      <div class="chain-arr">→</div>
+      <div class="chain-step">DNS Response</div>
+      <div class="chain-arr">→</div>
+      <div class="chain-step">TCP Handshake</div>
+      <div class="chain-arr">→</div>
+      <div class="chain-step">HTTP Request</div>
+      <div class="chain-arr">→</div>
+      <div class="chain-step">HTTP Response</div>
+    </div>
+    <p style="color:var(--text2);font-size:13.5px;margin-top:10px;">بعد Merge، يمكن رؤية هذا التسلسل كاملاً حتى لو كان موزعاً على ملفات منفصلة.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">مشكلات يجب الانتباه إليها</div>
+    <table class="tbl">
+      <thead><tr><th>المشكلة</th><th>السبب</th><th>التأثير</th></tr></thead>
+      <tbody>
+        <tr><td>Time Misalignment</td><td>فرق توقيت بين الأجهزة</td><td>تحليل خاطئ للـ Sequence</td></tr>
+        <tr><td>Duplicate Packets</td><td>نفس الترافيك مسجل مرتين</td><td>تكرار يشوش التحليل</td></tr>
+        <tr><td>Different Interfaces</td><td>ملفات من eth0 وwlan0</td><td>وجهات نظر مختلفة للترافيك</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert tip">
+    <span class="alert-icon">→</span>
+    <div>
+      <div class="al-title">Workflow بعد Merge</div>
+      <div class="alert-body">
+        <code>Statistics → Conversations</code> لفهم العلاقات بين الأجهزة &nbsp;|&nbsp;
+        <code>Statistics → Flow Graph</code> لعرض الترافيك كـ Sequence زمني &nbsp;|&nbsp;
+        فلتر IP محدد للتركيز على جهاز واحد
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. FILE DETAILS -->
+<section class="section" id="filedetails">
+  <div class="section-head">
+    <div class="sec-num">8</div>
+    <div>
+      <div class="sec-title">File Details – خصائص ملف الالتقاط</div>
+      <div class="sec-sub">Statistics → Capture File Properties</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_06.gif" alt="66c44fd9733427ea1181ad58-1760975214987.gif"><div class="img-caption">استعراض Capture File Properties</div></div>
+  <div class="grid2" style="margin-top:14px;">
+    <div>
+      <div class="layer-card layer-frame">
+        <div class="layer-title">File Name & Size</div>
+        <p style="color:var(--text2);font-size:13.5px;">تحديد الأولوية: ملف 1GB يختلف كلياً عن ملف 20KB في أسلوب المعالجة.</p>
+      </div>
+      <div class="layer-card layer-eth" style="border-color:var(--cyan);">
+        <div class="layer-title" style="color:var(--cyan);">Capture Time (Start / End)</div>
+        <p style="color:var(--text2);font-size:13.5px;">أهم حقل في التحقيق — يحدد الإطار الزمني للحادثة.</p>
+      </div>
+      <div class="layer-card layer-ip">
+        <div class="layer-title">Interface Used</div>
+        <p style="color:var(--text2);font-size:13.5px;">يحدد مصدر الترافيك — مهم لو عندك أكثر من Interface.</p>
+      </div>
+    </div>
+    <div>
+      <div class="layer-card layer-tcp">
+        <div class="layer-title">Packet Count</div>
+        <p style="color:var(--text2);font-size:13.5px;">عدد قليل = تحليل سريع &nbsp;|&nbsp; عدد كبير = يحتاج Filtering قوي</p>
+      </div>
+      <div class="layer-card layer-http" style="border-color:var(--orange);">
+        <div class="layer-title" style="color:var(--orange);">File Hash (MD5 / SHA1 / SHA256)</div>
+        <p style="color:var(--text2);font-size:13.5px;">بصمة الملف — تُستخدم في Digital Forensics للتحقق من عدم التلاعب بالملف.</p>
+      </div>
+      <div class="layer-card layer-frame" style="border-color:var(--text3);">
+        <div class="layer-title" style="color:var(--text2);">Capture Statistics</div>
+        <p style="color:var(--text2);font-size:13.5px;">متوسط حجم الباكيت، معدل البيانات، المدة — تعطي فكرة عن طبيعة الترافيك.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:4px;">
+    <div class="card-title">مثال على تحليل الحقول</div>
+    <table class="tbl">
+      <thead><tr><th>القيمة</th><th>الاستنتاج</th></tr></thead>
+      <tbody>
+        <tr><td>Duration: 2s &nbsp;/&nbsp; Packets: 10,000</td><td>Burst Traffic — محتمل DoS Attack</td></tr>
+        <tr><td>Interface: wlan0 &nbsp;/&nbsp; Traffic: DNS</td><td>WiFi Traffic — ممكن أجهزة متعددة على نفس الشبكة</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 9. PACKET DISSECTION -->
+<section class="section" id="dissection">
+  <div class="section-head">
+    <div class="sec-num">9</div>
+    <div>
+      <div class="sec-title">Packet Dissection</div>
+      <div class="sec-sub">تحليل طبقي كامل لكل Packet</div>
+    </div>
+  </div>
+
+  <p style="color:var(--text2);font-size:14px;margin-bottom:16px;">Wireshark لا يعرض الباكيت فقط — بل يُفككها (Dissect) لكل طبقة حسب البروتوكول، محولاً الـ raw bytes إلى بيانات قابلة للفهم والقراءة.</p>
+
+  <div class="grid2">
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_07.png" alt="image_4.png"><div class="img-caption">Packet 27 — نظرة عامة</div></div><div class="img-wrapper" style=""><img src="images/wireshark_fundamental_08.png" alt="image_5.png"><div class="img-caption">تفاصيل الـ Packet المختارة</div></div>
+  </div>
+
+  <div class="card" style="margin-top:4px;">
+    <div class="card-title" style="color:var(--blue);">Frame Layer — Metadata الباكيت</div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_09.png" alt="image_6.png"><div class="img-caption">Frame Layer details</div></div>
+    <table class="tbl" style="margin-top:10px;">
+      <thead><tr><th>الحقل</th><th>القيمة (مثال)</th><th>الاستخدام</th></tr></thead>
+      <tbody>
+        <tr><td>Frame Number</td><td><code>27</code></td><td>تتبع الترتيب والرجوع لباكيت محددة</td></tr>
+        <tr><td>Arrival Time</td><td><code>May 13, 2004 11:17:11</code></td><td>وقت وصول الباكيت</td></tr>
+        <tr><td>UTC Arrival Time</td><td><code>May 13, 2004 10:17:11</code></td><td>الربط مع SIEM ولوج السيرفرات</td></tr>
+        <tr><td>Time Delta</td><td><code>0.040058 seconds</code></td><td>تحليل Latency واكتشاف DoS</td></tr>
+        <tr><td>Frame Length</td><td><code>214 bytes</code></td><td>الحجم الفعلي على الشبكة</td></tr>
+        <tr><td>Protocol Stack</td><td><code>eth:ip:tcp:http</code></td><td>نظرة سريعة على كل الطبقات</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="layer-card layer-eth">
+    <div class="layer-title">Ethernet Layer — Layer 2 (MAC Addresses)</div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_10.png" alt="image_7.png"><div class="img-caption">Ethernet Layer</div></div>
+    <div class="code">Src MAC: fe:ff:20:00:01:00
+Dst MAC: Xerox_00:00:00</div>
+    <p style="color:var(--text2);font-size:13.5px;margin-top:8px;">يُستخدم في: تحليل ARP Spoofing وتحديد هوية الأجهزة على الشبكة المحلية.</p>
+  </div>
+
+  <div class="layer-card layer-ip">
+    <div class="layer-title">IP Layer — Layer 3 (Routing)</div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_11.png" alt="image_8.png"><div class="img-caption">IP Layer</div></div>
+    <div class="code">Src IP: 216.239.59.99   (Server — Google)
+Dst IP: 145.254.160.237 (Client)</div>
+    <p style="color:var(--text2);font-size:13.5px;margin-top:8px;">TTL قليل = الباكيت قطعت مسافة كبيرة (كثير من الـ Hops).</p>
+  </div>
+
+  <div class="layer-card layer-tcp">
+    <div class="layer-title">TCP Layer — Layer 4 (Transport)</div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_12.png" alt="image_9.png"><div class="img-caption">TCP Layer</div></div>
+    <div class="code">Src Port: 80    (HTTP Server)
+Dst Port: 3371  (Client)
+Seq: 1431 / Ack: 722
+Flags: [PSH, ACK]</div>
+    <div class="alert info" style="margin-top:10px;padding:10px 12px;">
+      <span class="alert-icon" style="font-size:13px;">→</span>
+      <div class="alert-body" style="font-size:13px;"><strong>[TCP Reassembled Segments]</strong> — يعني أن البيانات موزعة على عدة Packets وWireshark جمعها تلقائياً. مهم في HTTP، File Downloads، وتحليل Malware.</div>
+    </div>
+  </div>
+
+  <div class="layer-card layer-http">
+    <div class="layer-title">HTTP Layer — Application Layer</div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_13.png" alt="image_10.png"><div class="img-caption">HTTP Layer</div></div><div class="img-wrapper" style=""><img src="images/wireshark_fundamental_14.png" alt="image_11.png"><div class="img-caption">HTTP Response Data</div></div>
+    <div class="code">Hypertext Transfer Protocol
+HTTP/1.1 200 OK
+Content-Type: text/html</div>
+    <p style="color:var(--text2);font-size:13.5px;margin-top:8px;">الـ Response يحتوي على HTML كامل للصفحة. السيرفر يُرسل الصفحة مجزأة (TCP Segmentation) وWireshark يُعيد تجميعها (Reassembly).</p>
+  </div>
+
+  <div class="alert tip">
+    <span class="alert-icon">→</span>
+    <div>
+      <div class="al-title">Workflow تحليل الـ Packet</div>
+      <div class="alert-body">1. اختار Packet → 2. افتح Packet Details → 3. اقرأ Layer by Layer من الأسفل للأعلى → 4. ركز على IPs وPorts والبروتوكول → 5. راجع Reassembled Data</div>
+    </div>
+  </div>
+</section>
+
+<!-- 10. NAVIGATION -->
+<section class="section" id="navigation">
+  <div class="section-head">
+    <div class="sec-num">10</div>
+    <div>
+      <div class="sec-title">Packet Navigation</div>
+      <div class="sec-sub">التنقل والأرقام</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_15.png" alt="image_12.png"><div class="img-caption">Packet Numbers في Wireshark</div></div>
+  <div class="grid2" style="margin-top:14px;">
+    <div class="card">
+      <div class="card-title">أهمية Packet Numbers</div>
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-c"><strong>تتبع الأحداث</strong> — DNS في Packet 13، HTTP في 18، Response في 27</div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-c"><strong>ربط الباكيتات</strong> — Packets 26+27 تمثل نفس البيانات (Reassembly)</div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-c"><strong>الرجوع السريع</strong> — تدوين أرقام الباكيتات المهمة أثناء التحليل</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Go To Packet</div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_16.gif" alt="GotoPacket.gif"><div class="img-caption">ميزة Go To Packet</div></div>
+      <div class="code">Go → Go to Packet   (Ctrl+G)</div>
+      <p style="margin-top:8px;color:var(--text2);font-size:13.5px;">اكتب رقم الباكيت وينتقل إليها مباشرة. مفيد جداً عندما يُبلغ SIEM عن نشاط مشبوه في Packet رقم محدد.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:4px;">
+    <div class="card-title">تنبيه مهم: Packet Number ≠ Timestamp</div>
+    <p style="color:var(--text2);font-size:14px;">الباكيت رقم 27 ليست بالضرورة تالية زمنياً للباكيت 26 (خصوصاً بعد Merge أو Reorder). لذلك يجب دائماً الربط مع عمود Time وليس الاعتماد على الرقم فقط.</p>
+  </div>
+
+  <div class="alert tip">
+    <span class="alert-icon">→</span>
+    <div>
+      <div class="al-title">نصيحة عملية</div>
+      <div class="alert-body">سجّل أرقام الباكيتات المهمة أثناء التحليل كـ Notes مثل: "Packet 102 → Login Attempt" / "Packet 110 → Credentials Exposed"</div>
+    </div>
+  </div>
+</section>
+
+<!-- 11. FIND PACKET -->
+<section class="section" id="find">
+  <div class="section-head">
+    <div class="sec-num">11</div>
+    <div>
+      <div class="sec-title">Find Packet</div>
+      <div class="sec-sub">البحث داخل الترافيك (Ctrl+F)</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_17.gif" alt="findpacket.gif"><div class="img-caption">ميزة Find Packet</div></div>
+  <div class="grid2" style="margin-top:14px;">
+    <div class="card">
+      <div class="card-title">أنواع البحث</div>
+      <table class="tbl">
+        <thead><tr><th>النوع</th><th>الاستخدام</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Display Filter</strong></td><td>بحث باستخدام فلترة Wireshark مثل <code>http.request.method=="POST"</code></td></tr>
+          <tr><td><strong>String</strong></td><td>البحث عن نص مثل <code>login</code> أو <code>password</code> — الأكثر استخداماً</td></tr>
+          <tr><td><strong>Hex</strong></td><td>البحث بقيم Hex مثل <code>48 54 54 50</code> (= HTTP) — لتحليل Malware</td></tr>
+          <tr><td><strong>Regex</strong></td><td>بحث متقدم مثل <code>user.*login</code> لإيجاد أنماط متغيرة</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Use Cases أمنية</div>
+      <div class="filter-grid">
+        <div class="filter-row"><span class="filter-code">password</span><span class="filter-desc">البحث عن Credentials مكشوفة</span></div>
+        <div class="filter-row"><span class="filter-code">cmd / powershell</span><span class="filter-desc">كشف تنفيذ أوامر عبر Malware</span></div>
+        <div class="filter-row"><span class="filter-code">Cookie / Set-Cookie</span><span class="filter-desc">تحليل Sessions</span></div>
+        <div class="filter-row"><span class="filter-code">user|login|pass</span><span class="filter-desc">Regex يجمع كل الاحتمالات</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert tip">
+    <span class="alert-icon">→</span>
+    <div>
+      <div class="al-title">Workflow احترافي</div>
+      <div class="alert-body">1. حدد الهدف (login / malware / error) → 2. افتح Find Packet (Ctrl+F) → 3. اختار String أو Regex → 4. حدد Packet Bytes → 5. حلل النتيجة وارتبط بـ Follow Stream</div>
+    </div>
+  </div>
+</section>
+
+<!-- 12. MARK PACKET -->
+<section class="section" id="mark">
+  <div class="section-head">
+    <div class="sec-num">12</div>
+    <div>
+      <div class="sec-title">Mark Packet</div>
+      <div class="sec-sub">وضع Bookmark على الباكيتات المهمة</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_18.gif" alt="MarkPackets.gif"><div class="img-caption">ميزة Mark Packet</div></div>
+  <div class="grid2" style="margin-top:14px;">
+    <div class="card">
+      <div class="card-title">كيفية الاستخدام</div>
+      <p>انقر يميناً على الباكيت → <code>Mark/Unmark Packet</code></p>
+      <p>أو من: <code>Edit → Mark/Unmark Packet</code></p>
+      <p style="margin-top:8px;color:var(--text2);font-size:13.5px;">الباكيت المميزة تتحول إلى <strong style="color:var(--text);">لون أسود</strong>، وتتجاهل أي Coloring Rule أخرى.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">استخدامات احترافية</div>
+      <div class="steps">
+        <div class="step"><div class="step-n">▸</div><div class="step-c"><strong>Incident Investigation</strong> — تمييز الباكيتات التي تحتوي على Login أو أوامر مشبوهة</div></div>
+        <div class="step"><div class="step-n">▸</div><div class="step-c"><strong>بناء Timeline</strong> — تمييز بداية ونهاية Session لربط الأحداث</div></div>
+        <div class="step"><div class="step-n">▸</div><div class="step-c"><strong>Export المستهدف</strong> — تصدير الباكيتات المميزة فقط كـ Evidence</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert warn">
+    <span class="alert-icon">⚠</span>
+    <div>
+      <div class="al-title">تحذير مهم</div>
+      <div class="alert-body">الـ Marks لا تُحفظ عند إغلاق الملف. إذا احتجت الاحتفاظ بها: اعمل Export للباكيتات المميزة، أو سجل أرقامها كـ Notes، أو استخدم Permanent Coloring Rules.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 13. COMMENTS -->
+<section class="section" id="comments">
+  <div class="section-head">
+    <div class="sec-num">13</div>
+    <div>
+      <div class="sec-title">Packet Comments</div>
+      <div class="sec-sub">توثيق وتفسير داخل الـ PCAP</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_19.gif" alt="PacketComments.gif"><div class="img-caption">إضافة Packet Comments</div></div>
+  <div class="grid2" style="margin-top:14px;">
+    <div class="card">
+      <div class="card-title">كيفية إضافة Comment</div>
+      <p>Right Click → <code>Packet Comment → Add Comment</code></p>
+      <p>أو: <code>Edit → Packet Comment</code></p>
+      <p style="margin-top:10px;color:var(--text2);font-size:13.5px;">أمثلة على Comments مفيدة:</p>
+      <div class="code">Suspicious HTTP POST with credentials
+Possible malware C2 communication
+[1] Initial connection — start of attack
+[2] Data exfiltration starts here</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Mark vs Comment</div>
+      <table class="tbl">
+        <thead><tr><th>الخاصية</th><th>Mark</th><th>Comment</th></tr></thead>
+        <tbody>
+          <tr><td>الهدف</td><td>تمييز بصري سريع</td><td>توثيق وتحليل</td></tr>
+          <tr><td>الشكل</td><td>لون أسود</td><td>نص</td></tr>
+          <tr><td>يُحفظ؟</td><td>لا</td><td>نعم داخل PCAP</td></tr>
+          <tr><td>مناسب لـ</td><td>تحليل فردي</td><td>Team / تقارير</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="alert tip">
+    <span class="alert-icon">→</span>
+    <div>
+      <div class="al-title">نصائح كتابة Comments فعّالة</div>
+      <div class="alert-body">
+        اكتب بوضوح: "DNS query to suspicious domain xyz.com" لا "weird packet" &nbsp;|&nbsp;
+        اذكر السبب: لماذا تعتبر هذه الباكيت مشبوهة؟ &nbsp;|&nbsp;
+        استخدم Numbering للتسلسل المنطقي
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 14. EXPORT PACKETS -->
+<section class="section" id="export">
+  <div class="section-head">
+    <div class="sec-num">14</div>
+    <div>
+      <div class="sec-title">Export Packets</div>
+      <div class="sec-sub">تصدير باكيتات محددة</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_20.gif" alt="ExportPackets.gif"><div class="img-caption">عملية Export Packets</div></div>
+  <div class="card" style="margin-top:14px;">
+    <div class="card-title">أنواع التصدير</div>
+    <table class="tbl">
+      <thead><tr><th>النوع</th><th>الطريقة</th><th>متى تستخدمه</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Displayed Packets</strong></td><td>الباكيتات الظاهرة بعد الفلتر</td><td>الأكثر استخداماً — تصدير نتائج التصفية</td></tr>
+        <tr><td><strong>Selected Packets</strong></td><td>الباكيتات المختارة يدوياً (Ctrl+Click)</td><td>اختيار دقيق ومحدد</td></tr>
+        <tr><td><strong>Marked Packets</strong></td><td>الباكيتات المميزة بـ Mark</td><td>القوة الحقيقية — تصدير Evidence فقط</td></tr>
+        <tr><td>All Packets</td><td>الكل</td><td>نادر الاستخدام</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert tip">
+    <span class="alert-icon">→</span>
+    <div>
+      <div class="al-title">Workflow مثالي للـ Incident Response</div>
+      <div class="alert-body">
+        1. فلتر الترافيك المشبوه (<code>http</code> أو <code>dns</code>) &nbsp;→&nbsp;
+        2. عيّن Mark على الباكيتات المهمة &nbsp;→&nbsp;
+        3. صدّر Marked Packets فقط &nbsp;→&nbsp;
+        الناتج: ملف صغير يحتوي على Evidence نظيف
+      </div>
+    </div>
+  </div>
+
+  <div class="alert warn">
+    <span class="alert-icon">⚠</span>
+    <div>
+      <div class="al-title">تحذيرات مهمة</div>
+      <div class="alert-body">
+        احتفظ دائماً بالملف الأصلي &nbsp;|&nbsp;
+        قطع الباكيتات قد يُفقدك السياق الكامل للهجوم &nbsp;|&nbsp;
+        استخدم تسمية واضحة: <code>suspicious_http_traffic.pcapng</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 15. EXPORT OBJECTS -->
+<section class="section" id="exportobj">
+  <div class="section-head">
+    <div class="sec-num">15</div>
+    <div>
+      <div class="sec-title">Export Objects</div>
+      <div class="sec-sub">استخراج ملفات حقيقية من الترافيك</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_21.gif" alt="ExportObjects.gif"><div class="img-caption">ميزة Export Objects</div></div>
+  <p style="color:var(--text2);font-size:14px;margin-top:14px;margin-bottom:16px;">Wireshark يستطيع استخراج الملفات الحقيقية التي انتقلت عبر الشبكة — صور، HTML، EXE، PDFs. ليس فقط مشاهدة الترافيك، بل سحب الملفات ذاتها.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">كيفية الاستخدام</div>
+      <div class="code">File → Export Objects → HTTP</div>
+      <p style="margin-top:10px;color:var(--text2);font-size:13.5px;">تفتح نافذة تعرض قائمة بكل الملفات مع نوعها وحجمها. يمكن حفظ ملف واحد أو الكل.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">البروتوكولات المدعومة</div>
+      <table class="tbl">
+        <thead><tr><th>البروتوكول</th><th>الاستخدام</th></tr></thead>
+        <tbody>
+          <tr><td><strong>HTTP</strong></td><td>ملفات الويب (الأكثر استخداماً)</td></tr>
+          <tr><td>SMB</td><td>ملفات Windows المشتركة</td></tr>
+          <tr><td>TFTP</td><td>نقل ملفات بسيط</td></tr>
+          <tr><td>IMF</td><td>تحليل البريد الإلكتروني</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">استخدامات أمنية</div>
+    <div class="grid2">
+      <div>
+        <p style="font-size:13.5px;color:var(--text2);"><strong style="color:var(--orange);">Malware Analysis</strong> — إذا حُمّل ملف EXE يمكن استخراجه وفحصه على VirusTotal.</p>
+        <p style="font-size:13.5px;color:var(--text2);margin-top:8px;"><strong style="color:var(--red);">Data Exfiltration</strong> — استخراج الملفات المسرّبة من الشبكة.</p>
+      </div>
+      <div>
+        <p style="font-size:13.5px;color:var(--text2);"><strong style="color:var(--blue);">Web Forensics</strong> — استخراج الصفحات التي زارها المستخدم بالكامل.</p>
+        <p style="font-size:13.5px;color:var(--text2);margin-top:8px;"><strong style="color:var(--purple);">Email Analysis</strong> — استخراج المرفقات عبر IMF.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert warn">
+    <span class="alert-icon">⚠</span>
+    <div>
+      <div class="al-title">قيود مهمة</div>
+      <div class="alert-body">يعمل فقط مع الترافيك غير المشفر (HTTP لا HTTPS). كذلك يعتمد على TCP Reassembly لتجميع الملفات الكبيرة من Packets متعددة.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 16. TIME DISPLAY -->
+<section class="section" id="timedisplay">
+  <div class="section-head">
+    <div class="sec-num">16</div>
+    <div>
+      <div class="sec-title">Time Display Format</div>
+      <div class="sec-sub">تنسيق عرض الوقت</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_22.gif" alt="timeDisplay.gif"><div class="img-caption">تغيير Time Display Format</div></div><div class="img-wrapper" style=""><img src="images/wireshark_fundamental_23.png" alt="timeDisplay.png"><div class="img-caption">مقارنة بين صيغ الوقت المختلفة</div></div>
+  <div class="card" style="margin-top:14px;">
+    <div class="card-title">صيغ الوقت المتاحة</div>
+    <table class="tbl">
+      <thead><tr><th>الصيغة</th><th>الشكل</th><th>متى تستخدمها</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Seconds Since Beginning</strong></td><td><code>0.445313</code></td><td>تحليل Timing بين الباكيتات</td></tr>
+        <tr><td><strong>UTC Date and Time</strong></td><td><code>2004-05-13 10:17:09</code></td><td>الأفضل — ربط مع SIEM ولوج السيرفرات</td></tr>
+        <tr><td>Local Time</td><td>حسب إعدادات الجهاز</td><td>تجنّبه في التحقيقات — يسبب confusion</td></tr>
+        <tr><td>Time Delta</td><td><code>0.040058</code></td><td>قياس الفجوة بين الباكيتات</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">تغيير الصيغة</div>
+    <div class="code">View → Time Display Format → UTC Date and Time</div>
+  </div>
+
+  <div class="alert danger">
+    <span class="alert-icon">✖</span>
+    <div>
+      <div class="al-title">مشكلة Local Time</div>
+      <div class="alert-body">إذا كان جهازك GMT+2 والسيرفر يعمل بـ GMT، سيكون هناك فرق ساعتين في التوقيت. هذا قد يُضيّع عليك correlation مع الـ Logs الأخرى. الحل: استخدم UTC دائماً.</div>
+    </div>
+  </div>
+
+  <div class="alert tip">
+    <span class="alert-icon">→</span>
+    <div>
+      <div class="al-title">Insight احترافي</div>
+      <div class="alert-body">استخدم نوعين معاً: <strong>UTC</strong> لمعرفة الوقت الفعلي، و<strong>Time Delta</strong> لقياس سرعة الباكيتات. رؤية عدد كبير من الباكيتات في نفس اللحظة قد يدل على Scan أو Flood.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 17. EXPERT INFO -->
+<section class="section" id="expertinfo">
+  <div class="section-head">
+    <div class="sec-num">17</div>
+    <div>
+      <div class="sec-title">Expert Info</div>
+      <div class="sec-sub">Analyze → Expert Information</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_24.png" alt="image_13.png"><div class="img-caption">نافذة Expert Information</div></div>
+  <p style="color:var(--text2);font-size:14px;margin-top:14px;margin-bottom:16px;">Expert Info هي ميزة تحليل تلقائي يقدمها Wireshark تعطيك تنبيهات عن سلوك غير طبيعي أو مشكلات. لكن تذكر: هي Hints فقط وليست حكماً نهائياً.</p>
+
+  <div class="sev-row sev-blue"><div class="sev-dot"></div><div class="sev-label">Chat</div><div class="sev-desc">معلومات اعتيادية — مثل TCP Handshake طبيعي. معلوماتية فقط.</div></div>
+  <div class="sev-row sev-cyan"><div class="sev-dot"></div><div class="sev-label">Note</div><div class="sev-desc">حالة تستحق الانتباه — مثل HTTP Error Code أو استجابة غير متوقعة.</div></div>
+  <div class="sev-row sev-yellow"><div class="sev-dot"></div><div class="sev-label">Warn</div><div class="sev-desc">تحذير — مثل TCP Retransmission أو Latency مرتفع. ابدأ التحليل هنا.</div></div>
+  <div class="sev-row sev-red"><div class="sev-dot"></div><div class="sev-label">Error</div><div class="sev-desc">مشكلة فعلية — مثل Malformed Packet أو Protocol Error. راجعها أولاً.</div></div>
+
+  <div class="card" style="margin-top:14px;">
+    <div class="card-title">مجموعات التنبيهات المهمة</div>
+    <table class="tbl">
+      <thead><tr><th>المجموعة</th><th>ما تعنيه</th><th>ملاحظة</th></tr></thead>
+      <tbody>
+        <tr><td>Checksum Errors</td><td>Packet تالفة</td><td>قد تكون False Positive بسبب NIC Offloading</td></tr>
+        <tr><td>Malformed Packets</td><td>Packet غير مبنية بشكل صحيح</td><td>قد تدل على Bug، Exploit، أو أداة تهجم</td></tr>
+        <tr><td>Deprecated Protocol</td><td>بروتوكول قديم</td><td>قد يمثل ثغرة أمنية</td></tr>
+        <tr><td>Comment</td><td>يظهر عند وجود Packet Comments</td><td>معلوماتي فقط</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="vs-grid">
+    <div class="vs-card">
+      <div class="vs-label" style="color:var(--red);">الطريقة الخاطئة</div>
+      <p style="font-size:13.5px;color:var(--text2);">رؤية Error والحكم فوراً "هذا هجوم" — هذا خطأ متكرر.</p>
+    </div>
+    <div class="vs-card">
+      <div class="vs-label" style="color:var(--green);">الطريقة الصحيحة</div>
+      <p style="font-size:13.5px;color:var(--text2);">1. اقرأ التنبيه → 2. انتقل للباكيت → 3. حللها بنفسك → 4. اربط بالسياق</p>
+    </div>
+  </div>
+</section>
+
+<!-- 18. DISPLAY FILTERS -->
+<section class="section" id="filters">
+  <div class="section-head">
+    <div class="sec-num">18</div>
+    <div>
+      <div class="sec-title">Display Filters</div>
+      <div class="sec-sub">تصفية الترافيك وتضييق التحليل</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_25.gif" alt="filter.gif"><div class="img-caption">استخدام Display Filters</div></div>
+  <div class="alert info" style="margin-top:14px;">
+    <span class="alert-icon">→</span>
+    <div>
+      <div class="al-title">القاعدة الذهبية</div>
+      <div class="alert-body">"If you can click on it, you can filter it" — أي Field تراه في Packet Details يمكنك Right Click عليه واختيار Apply as Filter.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px;">
+    <div class="card-title">فلاتر أساسية يجب حفظها</div>
+    <div class="filter-grid">
+      <div class="filter-row"><span class="filter-code">http</span><span class="filter-desc">عرض HTTP فقط</span></div>
+      <div class="filter-row"><span class="filter-code">dns</span><span class="filter-desc">عرض DNS فقط</span></div>
+      <div class="filter-row"><span class="filter-code">tcp</span><span class="filter-desc">عرض TCP فقط</span></div>
+      <div class="filter-row"><span class="filter-code">ip.addr == 145.254.160.237</span><span class="filter-desc">كل الترافيك من/إلى IP محدد</span></div>
+      <div class="filter-row"><span class="filter-code">ip.src == 192.168.1.1</span><span class="filter-desc">الترافيك الصادر من IP محدد</span></div>
+      <div class="filter-row"><span class="filter-code">tcp.port == 80</span><span class="filter-desc">ترافيك على Port محدد</span></div>
+      <div class="filter-row"><span class="filter-code">http.request.method == "POST"</span><span class="filter-desc">HTTP POST Requests فقط</span></div>
+      <div class="filter-row"><span class="filter-code">http.request</span><span class="filter-desc">كل HTTP Requests</span></div>
+      <div class="filter-row"><span class="filter-code">dns.qry.name contains "login"</span><span class="filter-desc">DNS queries تحتوي على كلمة login</span></div>
+      <div class="filter-row"><span class="filter-code">tcp.flags.syn==1 and tcp.flags.ack==0</span><span class="filter-desc">كشف Port Scanning</span></div>
+      <div class="filter-row"><span class="filter-code">tcp.analysis.retransmission</span><span class="filter-desc">Packet Loss وبطء الشبكة</span></div>
+      <div class="filter-row"><span class="filter-code">tcp.analysis.flags</span><span class="filter-desc">TCP Errors عامة</span></div>
+      <div class="filter-row"><span class="filter-code">http && ip.src==192.168.1.1</span><span class="filter-desc">AND — دمج شرطين</span></div>
+      <div class="filter-row"><span class="filter-code">dns || http</span><span class="filter-desc">OR — إما dns أو http</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Apply as Filter من الـ GUI</div>
+    <div class="grid2">
+      <div>
+        <div class="steps">
+          <div class="step"><div class="step-n">1</div><div class="step-c">اختار Packet في القائمة</div></div>
+          <div class="step"><div class="step-n">2</div><div class="step-c">افتح Packet Details</div></div>
+          <div class="step"><div class="step-n">3</div><div class="step-c">انقر يميناً على أي Field</div></div>
+          <div class="step"><div class="step-n">4</div><div class="step-c">اختار Apply as Filter → Selected</div></div>
+        </div>
+      </div>
+      <div>
+        <p style="color:var(--text2);font-size:13.5px;margin-bottom:8px;">خيارات Apply as Filter:</p>
+        <div class="sev-row sev-blue" style="margin-bottom:6px;"><div class="sev-dot"></div><div class="sev-label" style="font-size:13px;">Selected</div><div class="sev-desc">فلترة على هذه القيمة بالتحديد</div></div>
+        <div class="sev-row sev-cyan" style="margin-bottom:6px;"><div class="sev-dot"></div><div class="sev-label" style="font-size:13px;">Not Selected</div><div class="sev-desc">استبعاد هذه القيمة</div></div>
+        <div class="sev-row sev-yellow" style="margin-bottom:6px;"><div class="sev-dot"></div><div class="sev-label" style="font-size:13px;">And / Or</div><div class="sev-desc">إضافة شرط إلى الفلتر الحالي</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert tip">
+    <span class="alert-icon">→</span>
+    <div>
+      <div class="al-title">نصائح لبناء فلاتر فعّالة</div>
+      <div class="alert-body">
+        ابدأ واسعاً ثم ضيّق: <code>tcp</code> ثم <code>tcp.port==80</code> &nbsp;|&nbsp;
+        استخدم <code>contains</code> للبحث النصي &nbsp;|&nbsp;
+        استخدم Autocomplete بـ <code>Ctrl+Space</code> &nbsp;|&nbsp;
+        فلتر واسع جداً = ضوضاء &nbsp;|&nbsp; فلتر ضيق جداً = فقدان بيانات مهمة
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 19. CONVERSATION FILTER -->
+<section class="section" id="conversation">
+  <div class="section-head">
+    <div class="sec-num">19</div>
+    <div>
+      <div class="sec-title">Conversation Filter & Colourise</div>
+      <div class="sec-sub">تحليل Session كاملة</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_26.gif" alt="conversation.gif"><div class="img-caption">Conversation Filter في الاستخدام</div></div><div class="img-wrapper" style=""><img src="images/wireshark_fundamental_27.gif" alt="color.gif"><div class="img-caption">Colourise Conversation</div></div>
+  <div class="alert info" style="margin-top:14px;">
+    <span class="alert-icon">→</span>
+    <div>
+      <div class="al-title">Conversation = Session كاملة</div>
+      <div class="alert-body">بدل تحليل Packet واحدة، Conversation Filter يعرض كل الترافيك بين IP ↔ IP و Port ↔ Port — أي القصة الكاملة.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px;">
+    <div class="card-title">كيفية الاستخدام</div>
+    <p style="color:var(--text2);font-size:14px;">Right Click على Packet → <code>Conversation Filter → TCP</code></p>
+    <p style="color:var(--text2);font-size:13.5px;margin-top:8px;">Wireshark يُنشئ فلتراً مثل:</p>
+    <div class="code">ip.addr==X && tcp.port==Y</div>
+    <p style="color:var(--text2);font-size:13.5px;margin-top:8px;">يعرض: كل الـ Requests، كل الـ Responses، كل Packets في نفس الـ Session.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Conversation Filter vs Colourise</div>
+    <table class="tbl">
+      <thead><tr><th>الخاصية</th><th>Conversation Filter</th><th>Colourise</th></tr></thead>
+      <tbody>
+        <tr><td>يُخفي باقي الترافيك</td><td>نعم</td><td>لا</td></tr>
+        <tr><td>يُميّز Session بلون</td><td>لا</td><td>نعم</td></tr>
+        <tr><td>الاستخدام</td><td>تحليل مركّز على Session</td><td>رؤية Session وسط الترافيك</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 20. PREPARE AS FILTER -->
+<section class="section" id="prepare">
+  <div class="section-head">
+    <div class="sec-num">20</div>
+    <div>
+      <div class="sec-title">Prepare as Filter</div>
+      <div class="sec-sub">بناء فلتر معقد خطوة بخطوة</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_28.gif" alt="prepare.gif"><div class="img-caption">استخدام Prepare as Filter</div></div>
+  <div class="grid2" style="margin-top:14px;">
+    <div class="card">
+      <div class="card-title">الفرق عن Apply as Filter</div>
+      <table class="tbl">
+        <thead><tr><th></th><th>Apply</th><th>Prepare</th></tr></thead>
+        <tbody>
+          <tr><td>التنفيذ</td><td>فوري</td><td>يدوي — لا يُطبق مباشرة</td></tr>
+          <tr><td>التحكم</td><td>محدود</td><td>عالي</td></tr>
+          <tr><td>الاستخدام</td><td>سريع</td><td>بناء فلاتر معقدة</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">مثال عملي</div>
+      <p style="color:var(--text2);font-size:13.5px;margin-bottom:10px;">هدف: تحليل HTTP من IP محدد:</p>
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-c">Prepare IP: <code>ip.src==192.168.1.1</code></div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-c">Right Click → <code>... and Selected</code> لإضافة HTTP</div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-c">الناتج: <code>ip.src==192.168.1.1 && http</code></div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-c">اضغط Enter لتطبيق الفلتر</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 21. APPLY AS COLUMN -->
+<section class="section" id="applycolumn">
+  <div class="section-head">
+    <div class="sec-num">21</div>
+    <div>
+      <div class="sec-title">Apply as Column</div>
+      <div class="sec-sub">إضافة أي Field كعمود في Packet List</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_29.gif" alt="ApplyColumn.gif"><div class="img-caption">إضافة Column جديد</div></div>
+  <div class="grid2" style="margin-top:14px;">
+    <div class="card">
+      <div class="card-title">كيفية الاستخدام</div>
+      <p>Right Click على أي Field في Packet Details → <code>Apply as Column</code></p>
+      <p style="margin-top:8px;color:var(--text2);font-size:13.5px;">يُضيف عموداً جديداً في Packet List يعرض قيمة هذا الـ Field لكل الباكيتات مرة واحدة.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Columns مفيدة جداً</div>
+      <div class="filter-grid">
+        <div class="filter-row"><span class="filter-code">tcp.stream</span><span class="filter-desc">تتبع TCP Sessions بسهولة</span></div>
+        <div class="filter-row"><span class="filter-code">http.host</span><span class="filter-desc">عرض كل المواقع في عمود واحد</span></div>
+        <div class="filter-row"><span class="filter-code">dns.qry.name</span><span class="filter-desc">كل الدومينات — الشذوذ يظهر فوراً</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert tip">
+    <span class="alert-icon">→</span>
+    <div>
+      <div class="al-title">Workflow احترافي</div>
+      <div class="alert-body">
+        لا تُضف Columns كثيرة — يُسبب Clutter &nbsp;|&nbsp;
+        استخدم Columns حسب الهدف: Malware = domains &nbsp;|&nbsp; Web = host &nbsp;|&nbsp; Network = IPs/Ports &nbsp;|&nbsp;
+        يمكن حذف أي Column بـ Right Click على Header
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 22. FOLLOW STREAM -->
+<section class="section" id="followstream">
+  <div class="section-head">
+    <div class="sec-num">22</div>
+    <div>
+      <div class="sec-title">Follow Stream</div>
+      <div class="sec-sub">إعادة بناء المحادثة الكاملة</div>
+    </div>
+  </div>
+<div class="img-wrapper" style=""><img src="images/wireshark_fundamental_30.gif" alt="new.gif"><div class="img-caption">Follow Stream في الاستخدام</div></div>
+  <p style="color:var(--text2);font-size:14px;margin-top:14px;margin-bottom:16px;">Follow Stream يُعيد تجميع الترافيك وعرضه كما تراه التطبيقات — بدلاً من Packets منفصلة، ترى المحادثة الكاملة بين الطرفين.</p>
+
+  <div class="card">
+    <div class="card-title">كيفية الاستخدام</div>
+    <div class="code">Right Click → Follow → TCP Stream
+أو: Analyze → Follow → TCP Stream</div>
+    <p style="color:var(--text2);font-size:13.5px;margin-top:10px;">النتيجة: نافذة تعرض المحادثة بلونين — <strong style="color:var(--red);">أحمر للـ Client</strong> و<strong style="color:var(--blue);">أزرق للـ Server</strong>.</p>
+    <div class="code" style="margin-top:10px;">GET /login HTTP/1.1
+Host: example.com
+&gt; HTTP/1.1 200 OK
+&gt; &lt;html&gt;...&lt;/html&gt;</div>
+  </div>
+
+  <div class="grid2" style="margin-top:14px;">
+    <div class="card">
+      <div class="card-title">أنواع Streams</div>
+      <div class="sev-row sev-blue" style="margin-bottom:6px;"><div class="sev-dot"></div><div class="sev-label" style="font-size:13px;">TCP</div><div class="sev-desc">HTTP، FTP، معظم البروتوكولات — الأكثر استخداماً</div></div>
+      <div class="sev-row sev-cyan" style="margin-bottom:6px;"><div class="sev-dot"></div><div class="sev-label" style="font-size:13px;">UDP</div><div class="sev-desc">DNS، VoIP</div></div>
+      <div class="sev-row sev-yellow" style="margin-bottom:6px;"><div class="sev-dot"></div><div class="sev-label" style="font-size:13px;">HTTP</div><div class="sev-desc">مخصص للويب — يُظهر المحتوى مباشرة</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">استخدامات احترافية</div>
+      <div class="steps">
+        <div class="step"><div class="step-n">▸</div><div class="step-c"><strong>تحليل Login</strong> — رؤية username/password في HTTP مباشرة</div></div>
+        <div class="step"><div class="step-n">▸</div><div class="step-c"><strong>Malware Communication</strong> — أوامر C2 وData Exfiltration</div></div>
+        <div class="step"><div class="step-n">▸</div><div class="step-c"><strong>Web Traffic Analysis</strong> — الصفحات والـ Requests كاملة</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Follow Stream vs Conversation Filter</div>
+    <table class="tbl">
+      <thead><tr><th>الخاصية</th><th>Follow Stream</th><th>Conversation Filter</th></tr></thead>
+      <tbody>
+        <tr><td>العرض</td><td>Data مجمعة مقروءة</td><td>Packets منفصلة</td></tr>
+        <tr><td>الهدف</td><td>قراءة المحتوى</td><td>تحليل الـ Packets</td></tr>
+        <tr><td>المستوى</td><td>Application Layer</td><td>Network Layer</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert warn">
+    <span class="alert-icon">⚠</span>
+    <div>
+      <div class="al-title">نقاط مهمة</div>
+      <div class="alert-body">
+        Follow Stream يُطبق فلتر <code>tcp.stream==X</code> تلقائياً — لإزالته اضغط X في Filter Bar &nbsp;|&nbsp;
+        لا يعمل مع HTTPS — لن ترى بيانات مفهومة &nbsp;|&nbsp;
+        يمكن تغيير عرض البيانات بين ASCII وHex
+      </div>
+    </div>
+  </div>
+
+  <!-- Final Summary -->
+  <div style="margin-top:36px;padding:28px;background:linear-gradient(135deg,rgba(26,34,53,0.8),rgba(20,30,46,0.9));border:1px solid var(--border2);border-radius:14px;text-align:center;">
+    <div style="font-size:22px;font-weight:800;color:var(--text);margin-bottom:8px;">جدول مرجعي سريع</div>
+    <div style="font-size:13px;color:var(--text3);margin-bottom:20px;">أهم الأدوات ومتى تستخدم كل منها</div>
+    <table class="tbl" style="text-align:right;">
+      <thead><tr><th>الأداة</th><th>الهدف</th><th>الاستخدام</th></tr></thead>
+      <tbody>
+        <tr><td>Display Filter</td><td>تضييق الترافيك</td><td>أول خطوة دائماً</td></tr>
+        <tr><td>Follow Stream</td><td>قراءة المحادثة</td><td>بعد تحديد Packet مهمة</td></tr>
+        <tr><td>Conversation Filter</td><td>تحليل Session كاملة</td><td>لفهم تسلسل الأحداث</td></tr>
+        <tr><td>Find Packet</td><td>البحث في الترافيك</td><td>البحث عن نص أو Pattern</td></tr>
+        <tr><td>Mark Packet</td><td>تمييز Packets مهمة</td><td>أثناء التحليل</td></tr>
+        <tr><td>Packet Comments</td><td>التوثيق</td><td>للتقارير والعمل الجماعي</td></tr>
+        <tr><td>Export Objects</td><td>استخراج ملفات</td><td>Malware وWeb Forensics</td></tr>
+        <tr><td>Expert Info</td><td>تنبيهات تلقائية</td><td>نقطة انطلاق للتحليل</td></tr>
+        <tr><td>Apply as Column</td><td>رؤية بيانات في جدول</td><td>تسريع التحليل</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<div id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<script>
+function go(id){
+  var el=document.getElementById(id);
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  if(window.innerWidth<=900)document.getElementById('sidebar').classList.remove('open');
+}
+var bar=document.getElementById('prog');
+var btt=document.getElementById('btt');
+window.addEventListener('scroll',function(){
+  var t=document.body.scrollHeight-window.innerHeight;
+  bar.style.transform='scaleX('+(window.scrollY/t)+')';
+  btt.classList.toggle('show',window.scrollY>400);
+});
+</script>
+</body>
+</html>
